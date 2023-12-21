@@ -1,0 +1,331 @@
+---
+title: "Analysis Result of GODE"
+author: "SEOYEON CHOI"
+format: dashboard
+execute: 
+  enabled: true
+  cache: false
+  freeze: false
+  error: true
+---
+
+```{python}
+import tqdm
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+import plotly.express as px
+import warnings
+warnings.simplefilter("ignore", np.ComplexWarning)
+from haversine import haversine
+from IPython.display import HTML
+from matplotlib import cm
+from pygsp import graphs, filters, plotting, utils
+import plotly.graph_objects as go
+
+import rpy2
+import rpy2.robjects as ro 
+from rpy2.robjects.vectors import FloatVector 
+from rpy2.robjects.packages import importr
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+
+# Linear
+
+```{python}
+#| title: Figure of Linear
+np.random.seed(6)
+epsilon = np.around(np.random.normal(size=1000),15)
+signal = np.random.choice(np.concatenate((np.random.uniform(-7, -5, 25).round(15), np.random.uniform(5, 7, 25).round(15), np.repeat(0, 950))), 1000)
+eta = signal + epsilon
+outlier_true_linear= signal.copy()
+outlier_true_linear = list(map(lambda x: 1 if x!=0 else 0,outlier_true_linear))
+x_1 = np.linspace(0,2,1000)
+y1_1 = 5 * x_1
+y_1 = y1_1 + eta # eta = signal + epsilon
+_df=pd.DataFrame({'x':x_1, 'y':y_1})
+w=np.zeros((1000,1000))
+for i in range(1000):
+    for j in range(1000):
+        if i==j :
+            w[i,j] = 0
+        elif np.abs(i-j) <= 1 : 
+            w[i,j] = 1
+index_of_trueoutlier_bool = signal!=0
+
+class Linear:
+    def __init__(self,df):
+        self.df = df
+        self.y = df.y.to_numpy()
+        self.x = df.x.to_numpy()
+        self.n = len(self.y)
+        self.W = w
+    def _eigen(self):
+        d= self.W.sum(axis=1)
+        D= np.diag(d)
+        self.L = np.diag(1/np.sqrt(d)) @ (D-self.W) @ np.diag(1/np.sqrt(d))
+        self.lamb, self.Psi = np.linalg.eigh(self.L)
+        self.Lamb = np.diag(self.lamb)      
+    def fit(self,sd=20): # fit with ebayesthresh
+        self._eigen()
+        self.ybar = self.Psi.T @ self.y # fbar := graph fourier transform of f
+        self.power = self.ybar**2 
+        ebayesthresh = importr('EbayesThresh').ebayesthresh
+        self.power_threshed=np.array(ebayesthresh(FloatVector(self.power),sd=sd))
+        self.ybar_threshed = np.where(self.power_threshed>0,self.ybar,0)
+        self.yhat = self.Psi@self.ybar_threshed
+        self.df = self.df.assign(yHat = self.yhat)
+        self.df = self.df.assign(Residual = self.df.y- self.df.yHat)
+    def fig(self,ymin=-5,ymax=20,cuts=0,cutf=995):
+        outlier_GODE_linear_old = (self.df['Residual']**2).tolist()
+        sorted_data = sorted(outlier_GODE_linear_old,reverse=True)
+        index = int(len(sorted_data) * 0.05)
+        five_percent = sorted_data[index]
+        outlier_GODE_linear = list(map(lambda x: 1 if x > five_percent else 0,outlier_GODE_linear_old))
+        outlier_GODE_linear_index = [i for i, value in enumerate(outlier_GODE_linear_old) if value > five_percent]
+
+        fig,ax = plt.subplots(figsize=(10,10))
+        ax.scatter(self.x,self.y,color='gray',s=50)
+        # ax.scatter(self.x[index_of_trueoutlier_bool],self.y[index_of_trueoutlier_bool],color='red',s=50)        
+        ax.scatter(self.x[index_of_trueoutlier_bool],self.y[index_of_trueoutlier_bool],color='red',s=100)
+        ax.plot(self.x[cuts:cutf],self.yhat[cuts:cutf], '--k',lw=3)
+        ax.scatter(self.df.x[outlier_GODE_linear_index],self.df.y[outlier_GODE_linear_index],color='red',s=550,facecolors='none', edgecolors='r')
+        fig.tight_layout()
+        # fig.savefig('fig1_231103.eps',format='eps')
+        # fig.savefig('linear_231129_3.pdf',format='pdf')
+_Linear = Linear(_df)
+_Linear.fit(sd=20)
+_Linear.fig()
+```
+
+## Orbit
+
+```{python}
+np.random.seed(777)
+epsilon = np.around(np.random.normal(size=1000),15)
+signal = np.random.choice(np.concatenate((np.random.uniform(-4, -1, 25).round(15), np.random.uniform(1, 4, 25).round(15), np.repeat(0, 950))), 1000)
+eta = signal + epsilon
+pi=np.pi
+n=1000
+ang=np.linspace(-pi,pi-2*pi/n,n)
+r=5+np.cos(np.linspace(0,12*pi,n))
+vx=r*np.cos(ang)
+vy=r*np.sin(ang)
+f1=10*np.sin(np.linspace(0,6*pi,n))
+f = f1 + eta
+_df = pd.DataFrame({'x' : vx, 'y' : vy, 'f' : f,'f1':f1})
+outlier_true_orbit = signal.copy()
+outlier_true_orbit = list(map(lambda x: 1 if x!=0 else 0,outlier_true_orbit))
+index_of_trueoutlier_bool = signal!=0
+class Orbit:
+    def __init__(self,df):
+        self.df = df 
+        self.f = df.f.to_numpy()
+        self.f1 = df.f1.to_numpy()
+        self.x = df.x.to_numpy()
+        self.y = df.y.to_numpy()
+        self.n = len(self.f)
+        self.theta= None
+    def get_distance(self):
+        self.D = np.zeros([self.n,self.n])
+        locations = np.stack([self.x, self.y],axis=1)
+        for i in tqdm.tqdm(range(self.n)):
+            for j in range(i,self.n):
+                self.D[i,j]=np.linalg.norm(locations[i]-locations[j])
+        self.D = self.D + self.D.T
+    def get_weightmatrix(self,theta=1,beta=0.5,kappa=4000):
+        self.theta = theta
+        dist = np.where(self.D < kappa,self.D,0)
+        self.W = np.exp(-(dist/self.theta)**2)
+    def _eigen(self):
+        d= self.W.sum(axis=1)
+        D= np.diag(d)
+        self.L = np.diag(1/np.sqrt(d)) @ (D-self.W) @ np.diag(1/np.sqrt(d))
+        self.lamb, self.Psi = np.linalg.eigh(self.L)
+        self.Lamb = np.diag(self.lamb)       
+    def fit(self,sd=5): # fit with ebayesthresh
+        self._eigen()
+        self.fbar = self.Psi.T @ self.f # fbar := graph fourier transform of f
+        self.power = self.fbar**2 
+        ebayesthresh = importr('EbayesThresh').ebayesthresh
+        self.power_threshed=np.array(ebayesthresh(FloatVector(self.fbar**2),sd=sd))
+        self.fbar_threshed = np.where(self.power_threshed>0,self.fbar,0)
+        self.fhat = self.Psi@self.fbar_threshed
+        self.df = self.df.assign(fHat = self.fhat)
+        self.df = self.df.assign(Residual = self.df.f- self.df.fHat)
+        
+    def fig(self):
+        outlier_GODE_one_old = (_Orbit.df['Residual']**2).tolist()
+        sorted_data = sorted(outlier_GODE_one_old,reverse=True)
+        index = int(len(sorted_data) * 0.05)
+        five_percent = sorted_data[index]
+        outlier_GODE_one = list(map(lambda x: 1 if x > five_percent else 0,outlier_GODE_one_old))
+        outlier_GODE_one_index = [i for i, value in enumerate(outlier_GODE_one_old) if value > five_percent]
+
+        fig, (ax1,ax2,ax3) = plt.subplots(1,3,figsize=(30,15),subplot_kw={"projection":"3d"})
+        ax1.grid(False)
+        ax1.scatter3D(self.x[~index_of_trueoutlier_bool],self.y[~index_of_trueoutlier_bool],self.f[~index_of_trueoutlier_bool],zdir='z',color='gray',alpha=0.99,zorder=1)
+        ax1.scatter3D(self.x[index_of_trueoutlier_bool],self.y[index_of_trueoutlier_bool],self.f[index_of_trueoutlier_bool],zdir='z',s=75,color='red',alpha=0.99,zorder=2)
+        ax1.scatter3D(self.x[outlier_GODE_one_index],self.y[outlier_GODE_one_index],self.f[outlier_GODE_one_index],edgecolors='red',zdir='z',s=300,facecolors='none',alpha=0.99,zorder=3)
+        ax1.plot3D(self.x,self.y,self.f1,'--k',lw=3,zorder=10)
+        ax1.xaxis.pane.fill = False
+        ax1.yaxis.pane.fill = False
+        ax1.zaxis.pane.fill = False
+        ax1.view_init(elev=30., azim=60)
+        
+        ax2.grid(False)
+        ax2.scatter3D(self.x[~index_of_trueoutlier_bool],self.y[~index_of_trueoutlier_bool],self.f[~index_of_trueoutlier_bool],zdir='z',color='gray',alpha=0.99,zorder=1)
+        ax2.scatter3D(self.x[index_of_trueoutlier_bool],self.y[index_of_trueoutlier_bool],self.f[index_of_trueoutlier_bool],zdir='z',s=75,color='red',alpha=0.99,zorder=2)
+        ax2.scatter3D(self.x[outlier_GODE_one_index],self.y[outlier_GODE_one_index],self.f[outlier_GODE_one_index],edgecolors='red',zdir='z',s=300,facecolors='none',alpha=0.99,zorder=3)      
+        ax2.plot3D(self.x,self.y,self.f1,'--k',lw=3,zorder=10)
+        ax2.xaxis.pane.fill = False
+        ax2.yaxis.pane.fill = False
+        ax2.zaxis.pane.fill = False
+        ax2.view_init(elev=30., azim=40)
+        
+        ax3.grid(False)
+        ax3.scatter3D(self.x[~index_of_trueoutlier_bool],self.y[~index_of_trueoutlier_bool],self.f[~index_of_trueoutlier_bool],zdir='z',color='gray',alpha=0.99,zorder=1)
+        ax3.scatter3D(self.x[index_of_trueoutlier_bool],self.y[index_of_trueoutlier_bool],self.f[index_of_trueoutlier_bool],zdir='z',s=75,color='red',alpha=0.99,zorder=2)
+        ax3.scatter3D(self.x[outlier_GODE_one_index],self.y[outlier_GODE_one_index],self.f[outlier_GODE_one_index],edgecolors='red',zdir='z',s=300,facecolors='none',alpha=0.99,zorder=3)
+        ax3.plot3D(self.x,self.y,self.f1,'--k',lw=3,zorder=10)
+        ax3.xaxis.pane.fill = False
+        ax3.yaxis.pane.fill = False
+        ax3.zaxis.pane.fill = False
+        ax3.view_init(elev=30., azim=10)
+_Orbit = Orbit(_df)
+_Orbit.get_distance()
+_Orbit.get_weightmatrix(theta=(_Orbit.D[_Orbit.D>0].mean()),kappa=2500) 
+_Orbit.fit(sd=15)
+_Orbit.fig()
+```
+
+# Bunny
+
+```{python}
+G = graphs.Bunny()
+n = G.N
+g = filters.Heat(G, tau=75) 
+n=2503
+np.random.seed(1212)
+normal = np.around(np.random.normal(size=n),15)
+unif = np.concatenate([np.random.uniform(low=3,high=7,size=60), np.random.uniform(low=-7,high=-3,size=60),np.zeros(n-120)]); np.random.shuffle(unif)
+noise = normal + unif
+f = np.zeros(n)
+f[1000] = -3234
+f = g.filter(f, method='chebyshev') 
+
+G.coords.shape
+_W = G.W.toarray()
+_x = G.coords[:,0]
+_y = G.coords[:,1]
+_z = -G.coords[:,2]
+# _df1 = {'W':_W,'x':_x,'y':_y,'z':_z, 'fnoise':f+noise,'f' : f, 'noise': noise,'unif':unif}
+_df = pd.DataFrame({'x': _x,'y':_y,'z':_z,'fnoise':f+noise,'f':f,'noise':noise})
+# unif = _df1['unif']
+outlier_true_bunny = unif.copy()
+outlier_true_bunny = list(map(lambda x: 1 if x !=0  else 0,outlier_true_bunny))
+# X = np.array(_df)[:,:4]
+index_of_trueoutlier_bool_bunny = unif!=0
+# _W = _df1['W']
+class BUNNY:
+    def __init__(self,df):
+        self.df = df 
+        self.f = df.f.to_numpy()
+        self.z = df.z.to_numpy()
+        self.x = df.x.to_numpy()
+        self.y = df.y.to_numpy()
+        self.noise = df.noise.to_numpy()
+        self.fnoise = self.f + self.noise
+        self.W = _W
+        self.n = len(self.f)
+        self.theta= None
+    def _eigen(self):
+        d= self.W.sum(axis=1)
+        D= np.diag(d)
+        self.L = np.diag(1/np.sqrt(d)) @ (D-self.W) @ np.diag(1/np.sqrt(d))
+        self.lamb, self.Psi = np.linalg.eigh(self.L)
+        self.Lamb = np.diag(self.lamb)       
+    def fit(self,sd=5): # fit with ebayesthresh
+        self._eigen()
+        self.fbar = self.Psi.T @ self.fnoise # fbar := graph fourier transform of f
+        self.power = self.fbar**2 
+        ebayesthresh = importr('EbayesThresh').ebayesthresh
+        self.power_threshed=np.array(ebayesthresh(FloatVector(self.power),sd=sd))
+        self.fbar_threshed = np.where(self.power_threshed>0,self.fbar,0)
+        self.fhat = self.Psi@self.fbar_threshed
+        self.df = self.df.assign(fnoise = self.fnoise)
+        self.df = self.df.assign(fHat = self.fhat)
+        self.df = self.df.assign(Residual = self.df.f + self.df.noise - self.df.fHat)
+
+    def fig(self):
+
+        outlier_GODE_one_old = (self.df['Residual']**2).tolist()
+        sorted_data = sorted(outlier_GODE_one_old,reverse=True)
+        index = int(len(sorted_data) * 0.05)
+        five_percent = sorted_data[index]
+        outlier_GODE_one = list(map(lambda x: 1 if x > five_percent else 0,outlier_GODE_one_old))
+        outlier_GODE_one_index = [i for i, value in enumerate(outlier_GODE_one_old) if value > five_percent]
+
+        fig = plt.figure(figsize=(30,12),dpi=400)
+        ax1 = fig.add_subplot(251, projection='3d')
+        ax1.grid(False)
+        ax1.scatter3D(self.x,self.y,self.z,c='gray',zdir='z',alpha=0.5,marker='.')
+        ax1.view_init(elev=60., azim=-90)
+
+        ax2= fig.add_subplot(252, projection='3d')
+        ax2.grid(False)
+        ax2.scatter3D(self.x,self.y,self.z,c=self.f,cmap='hsv',zdir='z',marker='.',alpha=0.5,vmin=-12,vmax=10)
+        ax2.view_init(elev=60., azim=-90)
+
+        ax3= fig.add_subplot(253, projection='3d')
+        ax3.grid(False)
+        ax3.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',alpha=0.5,vmin=-12,vmax=10)
+        ax3.view_init(elev=60., azim=-90)
+        
+        ax4= fig.add_subplot(254, projection='3d')
+        ax4.grid(False)
+        ax4.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',vmin=-12,vmax=10,s=1)
+        ax4.scatter3D(self.x[index_of_trueoutlier_bool_bunny],self.y[index_of_trueoutlier_bool_bunny],self.z[index_of_trueoutlier_bool_bunny],c=self.fnoise[index_of_trueoutlier_bool_bunny],cmap='hsv',zdir='z',marker='.',s=50)
+        ax4.view_init(elev=60., azim=-90)
+
+        ax5= fig.add_subplot(255, projection='3d')
+        ax5.grid(False)
+        ax5.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',vmin=-12,vmax=10,s=1)
+        ax5.scatter3D(self.x[index_of_trueoutlier_bool_bunny],self.y[index_of_trueoutlier_bool_bunny],self.z[index_of_trueoutlier_bool_bunny],c=self.fnoise[index_of_trueoutlier_bool_bunny],cmap='hsv',zdir='z',marker='.',s=50)
+        ax5.scatter3D(self.df.x[outlier_GODE_one_index],self.df.y[outlier_GODE_one_index],self.df.z[outlier_GODE_one_index],zdir='z',s=550,marker='.',edgecolors='red',facecolors='none')
+        ax5.view_init(elev=60., azim=-90)
+        
+        ax6 = fig.add_subplot(256, projection='3d')
+        ax6.grid(False)
+        ax6.scatter3D(self.x,self.y,self.z,c='gray',zdir='z',alpha=0.5,marker='.')
+        ax6.view_init(elev=-60., azim=-90)
+
+        ax7= fig.add_subplot(257, projection='3d')
+        ax7.grid(False)
+        ax7.scatter3D(self.x,self.y,self.z,c=self.f,cmap='hsv',zdir='z',marker='.',alpha=0.5,vmin=-12,vmax=10)
+        ax7.view_init(elev=-60., azim=-90)
+
+        ax8= fig.add_subplot(258, projection='3d')
+        ax8.grid(False)
+        ax8.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',alpha=0.5,vmin=-12,vmax=10)
+        ax8.view_init(elev=-60., azim=-90)
+        
+        ax9= fig.add_subplot(259, projection='3d')
+        ax9.grid(False)
+        ax9.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',vmin=-12,vmax=10,s=1)
+        ax9.scatter3D(self.x[index_of_trueoutlier_bool_bunny],self.y[index_of_trueoutlier_bool_bunny],self.z[index_of_trueoutlier_bool_bunny],c=self.fnoise[index_of_trueoutlier_bool_bunny],cmap='hsv',zdir='z',marker='.',s=50)
+        ax9.view_init(elev=-60., azim=-90)
+
+        ax10= fig.add_subplot(2,5,10, projection='3d')
+        ax10.grid(False)
+        ax10.scatter3D(self.x,self.y,self.z,c=self.fnoise,cmap='hsv',zdir='z',marker='.',vmin=-12,vmax=10,s=1)
+        ax10.scatter3D(self.x[index_of_trueoutlier_bool_bunny],self.y[index_of_trueoutlier_bool_bunny],self.z[index_of_trueoutlier_bool_bunny],c=self.fnoise[index_of_trueoutlier_bool_bunny],cmap='hsv',zdir='z',marker='.',s=50)
+        ax10.scatter3D(self.df.x[outlier_GODE_one_index],self.df.y[outlier_GODE_one_index],self.df.z[outlier_GODE_one_index],zdir='z',s=550,marker='.',edgecolors='red',facecolors='none')
+        ax10.view_init(elev=-60., azim=-90)        
+        # fig.savefig('fig_bunny.eps',format='eps')
+_BUNNY = BUNNY(_df)
+_BUNNY.fit(sd=20)
+_BUNNY.fig()
+```
