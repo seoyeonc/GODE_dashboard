@@ -100,7 +100,7 @@ _Linear.fit(sd=20)
 _Linear.fig()
 ```
 
-## Orbit
+# Orbit
 
 ```{python}
 np.random.seed(777)
