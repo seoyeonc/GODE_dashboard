@@ -40,7 +40,6 @@ warnings.simplefilter("ignore", np.ComplexWarning)
 
 from itables import show
 
-
         
 ```
 
@@ -65,9 +64,9 @@ linear_tab = {
     'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
 }
 
-df = pd.DataFrame(data)
+linear_tab1 = pd.DataFrame(linear_tab)
 
-show(df, precision=3, lengthMenu=[20, 40, 60])
+show(linear_tab1, precision=3, lengthMenu=[20, 40, 60])
 
 ```
 
