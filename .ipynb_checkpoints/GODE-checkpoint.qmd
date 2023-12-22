@@ -57,7 +57,7 @@ data = {
     'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
 }
 
-df = pd.DataFrame(data);df
+df_Linear = pd.DataFrame(data);df_Linear
 ```
 
 ```{python}
@@ -74,7 +74,7 @@ x_1 = np.linspace(0,2,1000)
 y1_1 = 5 * x_1
 y_1 = y1_1 + eta # eta = signal + epsilon
 
-_df=pd.DataFrame({'x':x_1, 'y':y_1})
+_df_Linear=pd.DataFrame({'x':x_1, 'y':y_1})
 
 w=np.zeros((1000,1000))
 for i in range(1000):
@@ -126,7 +126,7 @@ class Linear:
         fig.tight_layout()
         # fig.savefig('fig1_231103.eps',format='eps')
         # fig.savefig('linear_231129_3.pdf',format='pdf')
-_Linear = Linear(_df)
+_Linear = Linear(_df_Linear)
 _Linear.fit(sd=20)
 
 _Linear.fig()
@@ -154,8 +154,8 @@ data = {
     'AUC': [0.893, 0.664, 0.848, 0.533, 0.789, 0.454, 0.678, 0.864, 0.618, 0.530, 0.844, 0.464, 0.510, 0.849]
 }
 
-df = pd.DataFrame(data)
-df
+df_Orbit = pd.DataFrame(data)
+df_Orbit
 
 ```
 
@@ -174,10 +174,13 @@ vx=r*np.cos(ang)
 vy=r*np.sin(ang)
 f1=10*np.sin(np.linspace(0,6*pi,n))
 f = f1 + eta
-_df = pd.DataFrame({'x' : vx, 'y' : vy, 'f' : f,'f1':f1})
+
+_df_Orbit = pd.DataFrame({'x' : vx, 'y' : vy, 'f' : f,'f1':f1})
+
 outlier_true_orbit = signal.copy()
 outlier_true_orbit = list(map(lambda x: 1 if x!=0 else 0,outlier_true_orbit))
 index_of_trueoutlier_bool = signal!=0
+
 class Orbit:
     def __init__(self,df):
         self.df = df 
@@ -253,7 +256,7 @@ class Orbit:
         ax3.yaxis.pane.fill = False
         ax3.zaxis.pane.fill = False
         ax3.view_init(elev=30., azim=10)
-_Orbit = Orbit(_df)
+_Orbit = Orbit(_df_Orbit)
 _Orbit.get_distance()
 _Orbit.get_weightmatrix(theta=(_Orbit.D[_Orbit.D>0].mean()),kappa=2500) 
 _Orbit.fit(sd=15)
@@ -262,7 +265,33 @@ _Orbit.fig()
 
 # Bunny
 
+## Row {.tabset}
+
 ```{python}
+#| title: Comparision Table of Bunny
+
+import pandas as pd
+
+data = {
+    'Algorithm': ['GODE', 'LOF (Breunig et al., 2000)', 'kNN (Ramaswamy et al., 2000)', 'CBLOF (He et al., 2003)',
+                   'OCSVM (Sch ̈olkopf et al., 2001)', 'MCD (Hardin and Rocke, 2004)', 'Feature Bagging (Lazarevic and Kumar, 2005)',
+                   'ABOD (Kriegel et al., 2008)', 'Isolation Forest (Liu et al., 2008)', 'HBOS (Goldstein and Dengel, 2012)',
+                   'SOS (Janssens et al., 2012)', 'SO-GAAL (Liu et al., 2019)', 'MO-GAAL (Liu et al., 2019)',
+                   'LSCP (Zhao et al., 2019)'],
+    'Accuracy': [0.988, 0.943, 0.987, 0.981, 0.917, 0.978, 0.949, 0.979, 0.972, 0.932, 0.909, 0.952, 0.952, 0.982],
+    'Precision': [0.864, 0.413, 0.849, 0.786, 0.323, 0.762, 0.468, 0.770, 0.698, 0.302, 0.071, 0.000, 0.000, 0.802],
+    'Recall': [0.900, 0.433, 0.892, 0.825, 0.675, 0.800, 0.492, 0.808, 0.733, 0.317, 0.075, 0.000, 0.000, 0.842],
+    'F1': [0.882, 0.423, 0.870, 0.805, 0.437, 0.780, 0.480, 0.789, 0.715, 0.309, 0.073, 0.000, 0.000, 0.821],
+    'AUC': [0.996, 0.819, 0.984, 0.971, 0.858, 0.972, 0.834, 0.972, 0.968, 0.859, 0.557, 0.673, 0.660, 0.982]
+}
+
+df_Bunny = pd.DataFrame(data);df_Bunny
+
+```
+
+```{python}
+#| title: Figure of Bunny
+
 G = graphs.Bunny()
 n = G.N
 g = filters.Heat(G, tau=75) 
