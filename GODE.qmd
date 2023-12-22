@@ -37,7 +37,25 @@ warnings.filterwarnings("ignore")
 ```
 
 
-# Linear
+# Linear {orientation="rows" scrolling="true"}
+
+User
+||Accuracy|	Precision|	Recall|	F1|	AUC|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+|GODE|	0.999|	1.000|	0.980|	0.990|	1.000|
+|LOF (Breunig et al., 2000)|	0.991|	0.920|	0.902|	0.911|	0.998|
+|kNN (Ramaswamy et al., 2000)|	0.991|	0.920|	0.902|	0.911|	0.997|
+|CBLOF (He et al., 2003)|	0.969|	0.700|	0.686|	0.693|	0.959|
+|OCSVM (Sch ̈olkopf et al., 2001)|	0.923|	0.370|	0.725|	0.490|	0.864|
+|MCD (Hardin and Rocke, 2004)|	0.999|	1.000|	0.980|	0.990|	1.000|
+|Feature Bagging (Lazarevic and Kumar, 2005)|	0.993|	0.940|	0.922|	0.931|	0.997|
+|ABOD (Kriegel et al., 2008)|	0.973|	0.740|	0.725|	0.733|	0.990|
+|Isolation Forest (Liu et al., 2008)|	0.987|	0.880|	0.863|	0.871|	0.996|
+|HBOS (Goldstein and Dengel, 2012)|	0.972|	0.926|	0.490|	0.641|	0.864|
+|SOS (Janssens et al., 2012)	0.907|	0.080|	0.078|	0.079|	0.542|
+|SO-GAAL (Liu et al., 2019)|	0.946|	0.468|	0.431|	0.449|	0.575|
+|MO-GAAL (Liu et al., 2019)|	0.947|	0.478|	0.431|	0.454|	0.576|
+|LSCP (Zhao et al., 2019)|	0.985|	0.860|	0.843|	0.851|	0.999||
 
 ```{python}
 #| title: Figure of Linear
