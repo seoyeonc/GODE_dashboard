@@ -37,7 +37,8 @@ warnings.filterwarnings("ignore")
 
 ```
 
-# Linear {.tabset}
+# Linear 
+## Row {.tabset}
 
 ```{python}
 #| title: Comparision Table of Linear
