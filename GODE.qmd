@@ -34,22 +34,6 @@ from rpy2.robjects.packages import importr
 import warnings
 warnings.filterwarnings("ignore")
 
-from itables import show        
-
-linear_tab = {
-    'Algorithm': ['GODE', 'LOF (Breunig et al., 2000)', 'kNN (Ramaswamy et al., 2000)', 'CBLOF (He et al., 2003)',
-                   'OCSVM (Sch ̈olkopf et al., 2001)', 'MCD (Hardin and Rocke, 2004)', 'Feature Bagging (Lazarevic and Kumar, 2005)',
-                   'ABOD (Kriegel et al., 2008)', 'Isolation Forest (Liu et al., 2008)', 'HBOS (Goldstein and Dengel, 2012)',
-                   'SOS (Janssens et al., 2012)', 'SO-GAAL (Liu et al., 2019)', 'MO-GAAL (Liu et al., 2019)',
-                   'LSCP (Zhao et al., 2019)'],
-    'Accuracy': [0.999, 0.991, 0.991, 0.969, 0.923, 0.999, 0.993, 0.973, 0.987, 0.972, 0.907, 0.946, 0.947, 0.985],
-    'Precision': [1.000, 0.920, 0.920, 0.700, 0.370, 1.000, 0.940, 0.740, 0.880, 0.926, 0.080, 0.468, 0.478, 0.860],
-    'Recall': [0.980, 0.902, 0.902, 0.686, 0.725, 0.980, 0.922, 0.725, 0.863, 0.490, 0.078, 0.431, 0.431, 0.843],
-    'F1': [0.990, 0.911, 0.911, 0.693, 0.490, 0.990, 0.931, 0.733, 0.871, 0.641, 0.079, 0.449, 0.454, 0.851],
-    'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
-}
-
-linear_tab1 = pd.DataFrame(linear_tab)
 
 np.random.seed(6)
 epsilon = np.around(np.random.normal(size=1000),15)
@@ -123,13 +107,6 @@ _Linear.fit(sd=20)
 
 
 # Linear {orientation="columns" scrolling="true"}
-
-```{python}
-#| title: Comparision Table
-
-import itables 
-itables.show(linear_tab1,showIndex=False, precision=3, lengthMenu=[20, 40, 60])
-```
 
 ```{python}
 
