@@ -1,7 +1,11 @@
 ---
 title: "Analysis Result of GODE"
 author: "SEOYEON CHOI"
-format: dashboard
+format:
+    dashboard:
+        nav-buttons:
+          - icon: github
+            href: https://github.com/seoyeonc
 execute: 
   enabled: true
   cache: false
@@ -221,14 +225,14 @@ _W = G.W.toarray()
 _x = G.coords[:,0]
 _y = G.coords[:,1]
 _z = -G.coords[:,2]
-# _df1 = {'W':_W,'x':_x,'y':_y,'z':_z, 'fnoise':f+noise,'f' : f, 'noise': noise,'unif':unif}
+
 _df = pd.DataFrame({'x': _x,'y':_y,'z':_z,'fnoise':f+noise,'f':f,'noise':noise})
-# unif = _df1['unif']
+
 outlier_true_bunny = unif.copy()
 outlier_true_bunny = list(map(lambda x: 1 if x !=0  else 0,outlier_true_bunny))
-# X = np.array(_df)[:,:4]
+
 index_of_trueoutlier_bool_bunny = unif!=0
-# _W = _df1['W']
+
 class BUNNY:
     def __init__(self,df):
         self.df = df 
