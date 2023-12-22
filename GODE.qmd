@@ -37,6 +37,10 @@ from rpy2.robjects.packages import importr
 import warnings
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", np.ComplexWarning)
+
+from itables import show
+
+
         
 ```
 
@@ -48,11 +52,7 @@ warnings.simplefilter("ignore", np.ComplexWarning)
 ```{python}
 #| title: Comparision Table
 
-import pandas as pd
-from itables import show
-
-
-data = {
+linear_tab = {
     'Algorithm': ['GODE', 'LOF (Breunig et al., 2000)', 'kNN (Ramaswamy et al., 2000)', 'CBLOF (He et al., 2003)',
                    'OCSVM (Sch ̈olkopf et al., 2001)', 'MCD (Hardin and Rocke, 2004)', 'Feature Bagging (Lazarevic and Kumar, 2005)',
                    'ABOD (Kriegel et al., 2008)', 'Isolation Forest (Liu et al., 2008)', 'HBOS (Goldstein and Dengel, 2012)',
