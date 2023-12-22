@@ -3,9 +3,10 @@ title: "Analysis Result of GODE"
 author: "SEOYEON CHOI"
 format:
     dashboard:
-        nav-buttons:
-          - icon: github
-            href: https://github.com/seoyeonc
+     theme: default
+     nav-buttons:
+      - icon: github
+        href: https://github.com/seoyeonc
 execute: 
   enabled: true
   cache: false
@@ -36,7 +37,7 @@ warnings.filterwarnings("ignore")
 
 ```
 
-# Linear {orientation="rows" scrolling="true"}
+# Linear {.tabset}
 
 ```{python}
 #| title: Comparision Table of Linear
