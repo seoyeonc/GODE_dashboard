@@ -17,7 +17,6 @@ execute:
 import tqdm
 import numpy as np
 import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt 
 import plotly.express as px
 import warnings
@@ -27,8 +26,6 @@ from IPython.display import HTML
 from matplotlib import cm
 from pygsp import graphs, filters, plotting, utils
 import plotly.graph_objects as go
-import random
-import copy 
 
 import rpy2
 import rpy2.robjects as ro 
@@ -36,7 +33,6 @@ from rpy2.robjects.vectors import FloatVector
 from rpy2.robjects.packages import importr
 import warnings
 warnings.filterwarnings("ignore")
-warnings.simplefilter("ignore", np.ComplexWarning)
 
 from itables import show        
 ```
@@ -61,7 +57,7 @@ linear_tab = {
     'F1': [0.990, 0.911, 0.911, 0.693, 0.490, 0.990, 0.931, 0.733, 0.871, 0.641, 0.079, 0.449, 0.454, 0.851],
     'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
 }
-import pandas as pd
+
 linear_tab1 = pd.DataFrame(linear_tab)
 
 show(linear_tab1, precision=3, lengthMenu=[20, 40, 60])
