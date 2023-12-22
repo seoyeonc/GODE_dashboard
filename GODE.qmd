@@ -55,10 +55,7 @@ data = {
     'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
 }
 
-df = pd.DataFrame(data)
-
-# Print the DataFrame
-print(df)
+df = pd.DataFrame(data);df
 ```
 
 ```{python}

@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -74,6 +74,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -112,38 +115,153 @@ ul.task-list li input[type="checkbox"] {
 <div class="card cell html-fill-item html-fill-container bslib-card" data-title="Comparision Table of Linear" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-header"><div class="card-title">Comparision Table of Linear</div></div>
 <div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-stdout html-fill-item html-fill-container">
-<pre><code>                                      Algorithm  Accuracy  Precision  Recall  \
-0                                          GODE     0.999      1.000   0.980   
-1                    LOF (Breunig et al., 2000)     0.991      0.920   0.902   
-2                  kNN (Ramaswamy et al., 2000)     0.991      0.920   0.902   
-3                       CBLOF (He et al., 2003)     0.969      0.700   0.686   
-4              OCSVM (Sch ̈olkopf et al., 2001)     0.923      0.370   0.725   
-5                  MCD (Hardin and Rocke, 2004)     0.999      1.000   0.980   
-6   Feature Bagging (Lazarevic and Kumar, 2005)     0.993      0.940   0.922   
-7                   ABOD (Kriegel et al., 2008)     0.973      0.740   0.725   
-8           Isolation Forest (Liu et al., 2008)     0.987      0.880   0.863   
-9             HBOS (Goldstein and Dengel, 2012)     0.972      0.926   0.490   
-10                  SOS (Janssens et al., 2012)     0.907      0.080   0.078   
-11                   SO-GAAL (Liu et al., 2019)     0.946      0.468   0.431   
-12                   MO-GAAL (Liu et al., 2019)     0.947      0.478   0.431   
-13                     LSCP (Zhao et al., 2019)     0.985      0.860   0.843   
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="2">
+<div class="html-fill-item html-fill-container">
 
-       F1    AUC  
-0   0.990  1.000  
-1   0.911  0.998  
-2   0.911  0.997  
-3   0.693  0.959  
-4   0.490  0.864  
-5   0.990  1.000  
-6   0.931  0.997  
-7   0.733  0.990  
-8   0.871  0.996  
-9   0.641  0.864  
-10  0.079  0.542  
-11  0.449  0.575  
-12  0.454  0.576  
-13  0.851  0.999  </code></pre>
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Algorithm</th>
+<th data-quarto-table-cell-role="th">Accuracy</th>
+<th data-quarto-table-cell-role="th">Precision</th>
+<th data-quarto-table-cell-role="th">Recall</th>
+<th data-quarto-table-cell-role="th">F1</th>
+<th data-quarto-table-cell-role="th">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>GODE</td>
+<td>0.999</td>
+<td>1.000</td>
+<td>0.980</td>
+<td>0.990</td>
+<td>1.000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>LOF (Breunig et al., 2000)</td>
+<td>0.991</td>
+<td>0.920</td>
+<td>0.902</td>
+<td>0.911</td>
+<td>0.998</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>kNN (Ramaswamy et al., 2000)</td>
+<td>0.991</td>
+<td>0.920</td>
+<td>0.902</td>
+<td>0.911</td>
+<td>0.997</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>CBLOF (He et al., 2003)</td>
+<td>0.969</td>
+<td>0.700</td>
+<td>0.686</td>
+<td>0.693</td>
+<td>0.959</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>OCSVM (Sch ̈olkopf et al., 2001)</td>
+<td>0.923</td>
+<td>0.370</td>
+<td>0.725</td>
+<td>0.490</td>
+<td>0.864</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>MCD (Hardin and Rocke, 2004)</td>
+<td>0.999</td>
+<td>1.000</td>
+<td>0.980</td>
+<td>0.990</td>
+<td>1.000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Feature Bagging (Lazarevic and Kumar, 2005)</td>
+<td>0.993</td>
+<td>0.940</td>
+<td>0.922</td>
+<td>0.931</td>
+<td>0.997</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>ABOD (Kriegel et al., 2008)</td>
+<td>0.973</td>
+<td>0.740</td>
+<td>0.725</td>
+<td>0.733</td>
+<td>0.990</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>Isolation Forest (Liu et al., 2008)</td>
+<td>0.987</td>
+<td>0.880</td>
+<td>0.863</td>
+<td>0.871</td>
+<td>0.996</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>HBOS (Goldstein and Dengel, 2012)</td>
+<td>0.972</td>
+<td>0.926</td>
+<td>0.490</td>
+<td>0.641</td>
+<td>0.864</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>SOS (Janssens et al., 2012)</td>
+<td>0.907</td>
+<td>0.080</td>
+<td>0.078</td>
+<td>0.079</td>
+<td>0.542</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>SO-GAAL (Liu et al., 2019)</td>
+<td>0.946</td>
+<td>0.468</td>
+<td>0.431</td>
+<td>0.449</td>
+<td>0.575</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>MO-GAAL (Liu et al., 2019)</td>
+<td>0.947</td>
+<td>0.478</td>
+<td>0.431</td>
+<td>0.454</td>
+<td>0.576</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>LSCP (Zhao et al., 2019)</td>
+<td>0.985</td>
+<td>0.860</td>
+<td>0.843</td>
+<td>0.851</td>
+<td>0.999</td>
+</tr>
+</tbody>
+</table>
+
+</div>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
