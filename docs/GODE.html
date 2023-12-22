@@ -110,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="card cell bslib-card html-fill-container" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-error html-fill-item html-fill-container">
-<pre><code>ImportError: C extension: None not built. If you want to import pandas from the source directory, you may need to run 'python setup.py build_ext' to build the C extensions first.</code></pre>
+<pre><code>ImportError: Numba needs NumPy 1.24 or less</code></pre>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
@@ -121,11 +121,41 @@ ul.task-list li input[type="checkbox"] {
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 <div id="linear" class="dashboard-page tab-pane show active html-fill-item html-fill-container" data-scrolling="true" data-orientation="rows" aria-labelledby="tab-linear">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr) minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="card cell html-fill-item html-fill-container bslib-card" data-title="FComparision Table of Linear" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-header"><div class="card-title">FComparision Table of Linear</div></div>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-title="Comparision Table of Linear" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-header"><div class="card-title">Comparision Table of Linear</div></div>
 <div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-error html-fill-item html-fill-container">
-<pre><code>ImportError: C extension: None not built. If you want to import pandas from the source directory, you may need to run 'python setup.py build_ext' to build the C extensions first.</code></pre>
+<div class="cell-output cell-output-stdout html-fill-item html-fill-container">
+<pre><code>                                      Algorithm  Accuracy  Precision  Recall  \
+0                                          GODE     0.999      1.000   0.980   
+1                    LOF (Breunig et al., 2000)     0.991      0.920   0.902   
+2                  kNN (Ramaswamy et al., 2000)     0.991      0.920   0.902   
+3                       CBLOF (He et al., 2003)     0.969      0.700   0.686   
+4              OCSVM (Sch ̈olkopf et al., 2001)     0.923      0.370   0.725   
+5                  MCD (Hardin and Rocke, 2004)     0.999      1.000   0.980   
+6   Feature Bagging (Lazarevic and Kumar, 2005)     0.993      0.940   0.922   
+7                   ABOD (Kriegel et al., 2008)     0.973      0.740   0.725   
+8           Isolation Forest (Liu et al., 2008)     0.987      0.880   0.863   
+9             HBOS (Goldstein and Dengel, 2012)     0.972      0.926   0.490   
+10                  SOS (Janssens et al., 2012)     0.907      0.080   0.078   
+11                   SO-GAAL (Liu et al., 2019)     0.946      0.468   0.431   
+12                   MO-GAAL (Liu et al., 2019)     0.947      0.478   0.431   
+13                     LSCP (Zhao et al., 2019)     0.985      0.860   0.843   
+
+       F1    AUC  
+0   0.990  1.000  
+1   0.911  0.998  
+2   0.911  0.997  
+3   0.693  0.959  
+4   0.490  0.864  
+5   0.990  1.000  
+6   0.931  0.997  
+7   0.733  0.990  
+8   0.871  0.996  
+9   0.641  0.864  
+10  0.079  0.542  
+11  0.449  0.575  
+12  0.454  0.576  
+13  0.851  0.999  </code></pre>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
@@ -138,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="card-header"><div class="card-title">Figure of Linear</div></div>
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-error html-fill-item html-fill-container">
-<pre><code>NameError: name 'pd' is not defined</code></pre>
+<pre><code>NameError: name 'importr' is not defined</code></pre>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
@@ -154,7 +184,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-error html-fill-item html-fill-container">
-<pre><code>NameError: name 'pd' is not defined</code></pre>
+<pre><code>NameError: name 'importr' is not defined</code></pre>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">

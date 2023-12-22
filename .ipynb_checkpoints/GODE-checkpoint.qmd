@@ -36,11 +36,10 @@ warnings.filterwarnings("ignore")
 
 ```
 
-
 # Linear {orientation="rows" scrolling="true"}
 
 ```{python}
-#| title: FComparision Table of Linear
+#| title: Comparision Table of Linear
 import pandas as pd
 
 data = {
