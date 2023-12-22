@@ -6,9 +6,6 @@ format:
         nav-buttons:
           - icon: github
             href: https://github.com/seoyeonc
-        theme: 
-          - default
-          - styles.css
 execute: 
   enabled: true
   cache: false
