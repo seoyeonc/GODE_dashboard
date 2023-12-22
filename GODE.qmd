@@ -35,6 +35,14 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+```
+
+
+# Linear
+
+```{python}
+#| title: Figure of Linear
+
 np.random.seed(6)
 epsilon = np.around(np.random.normal(size=1000),15)
 signal = np.random.choice(np.concatenate((np.random.uniform(-7, -5, 25).round(15), np.random.uniform(5, 7, 25).round(15), np.repeat(0, 950))), 1000)
@@ -100,17 +108,6 @@ class Linear:
         # fig.savefig('linear_231129_3.pdf',format='pdf')
 _Linear = Linear(_df)
 _Linear.fit(sd=20)
-
-
-
-```
-
-
-# Linear {orientation="columns" scrolling="true"}
-
-```{python}
-
-#| title: Figure of Linear
 
 _Linear.fig()
 
