@@ -39,23 +39,28 @@ warnings.filterwarnings("ignore")
 
 # Linear {orientation="rows" scrolling="true"}
 
-User
-||Accuracy|	Precision|	Recall|	F1|	AUC|
-|:--:|:--:|:--:|:--:|:--:|:--:|
-|GODE|	0.999|	1.000|	0.980|	0.990|	1.000|
-|LOF (Breunig et al., 2000)|	0.991|	0.920|	0.902|	0.911|	0.998|
-|kNN (Ramaswamy et al., 2000)|	0.991|	0.920|	0.902|	0.911|	0.997|
-|CBLOF (He et al., 2003)|	0.969|	0.700|	0.686|	0.693|	0.959|
-|OCSVM (Sch ̈olkopf et al., 2001)|	0.923|	0.370|	0.725|	0.490|	0.864|
-|MCD (Hardin and Rocke, 2004)|	0.999|	1.000|	0.980|	0.990|	1.000|
-|Feature Bagging (Lazarevic and Kumar, 2005)|	0.993|	0.940|	0.922|	0.931|	0.997|
-|ABOD (Kriegel et al., 2008)|	0.973|	0.740|	0.725|	0.733|	0.990|
-|Isolation Forest (Liu et al., 2008)|	0.987|	0.880|	0.863|	0.871|	0.996|
-|HBOS (Goldstein and Dengel, 2012)|	0.972|	0.926|	0.490|	0.641|	0.864|
-|SOS (Janssens et al., 2012)	0.907|	0.080|	0.078|	0.079|	0.542|
-|SO-GAAL (Liu et al., 2019)|	0.946|	0.468|	0.431|	0.449|	0.575|
-|MO-GAAL (Liu et al., 2019)|	0.947|	0.478|	0.431|	0.454|	0.576|
-|LSCP (Zhao et al., 2019)|	0.985|	0.860|	0.843|	0.851|	0.999||
+```{python}
+#| title: FComparision Table of Linear
+import pandas as pd
+
+data = {
+    'Algorithm': ['GODE', 'LOF (Breunig et al., 2000)', 'kNN (Ramaswamy et al., 2000)', 'CBLOF (He et al., 2003)',
+                   'OCSVM (Sch ̈olkopf et al., 2001)', 'MCD (Hardin and Rocke, 2004)', 'Feature Bagging (Lazarevic and Kumar, 2005)',
+                   'ABOD (Kriegel et al., 2008)', 'Isolation Forest (Liu et al., 2008)', 'HBOS (Goldstein and Dengel, 2012)',
+                   'SOS (Janssens et al., 2012)', 'SO-GAAL (Liu et al., 2019)', 'MO-GAAL (Liu et al., 2019)',
+                   'LSCP (Zhao et al., 2019)'],
+    'Accuracy': [0.999, 0.991, 0.991, 0.969, 0.923, 0.999, 0.993, 0.973, 0.987, 0.972, 0.907, 0.946, 0.947, 0.985],
+    'Precision': [1.000, 0.920, 0.920, 0.700, 0.370, 1.000, 0.940, 0.740, 0.880, 0.926, 0.080, 0.468, 0.478, 0.860],
+    'Recall': [0.980, 0.902, 0.902, 0.686, 0.725, 0.980, 0.922, 0.725, 0.863, 0.490, 0.078, 0.431, 0.431, 0.843],
+    'F1': [0.990, 0.911, 0.911, 0.693, 0.490, 0.990, 0.931, 0.733, 0.871, 0.641, 0.079, 0.449, 0.454, 0.851],
+    'AUC': [1.000, 0.998, 0.997, 0.959, 0.864, 1.000, 0.997, 0.990, 0.996, 0.864, 0.542, 0.575, 0.576, 0.999]
+}
+
+df = pd.DataFrame(data)
+
+# Print the DataFrame
+print(df)
+```
 
 ```{python}
 #| title: Figure of Linear
