@@ -417,3 +417,41 @@ _BUNNY = BUNNY(_df)
 _BUNNY.fit(sd=20)
 _BUNNY.fig()
 ```
+
+
+# Real Data Analysis
+
+## Row {.tabset}
+
+```{python}
+#| title: Haiti
+
+import pickle
+
+with open('earth_haiti.pkl', 'rb') as file:
+    earth_haiti = pickle.load(file)
+earth_haiti.show()
+
+```
+
+```{python}
+#| title: Iquique
+
+import pickle
+
+with open('earth_lquique.pkl', 'rb') as file:
+    earth_lquique = pickle.load(file)
+earth_lquique.show()
+
+```
+
+```{python}
+#| title: Sichuan
+
+import pickle
+
+with open('earth_sichuan.pkl', 'rb') as file:
+    earth_sichuan = pickle.load(file)
+earth_sichuan.show()
+
+```
